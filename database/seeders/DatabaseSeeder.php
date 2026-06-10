@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             'kota'         => 'Bandung',
             'provinsi'     => 'Jawa Barat',
             'telepon'      => '022-1234567',
-            'email'        => 'info@sd babakan02.sch.id',
+            'email'        => 'info@sdnbabakan02.sch.id',
         ]);
 
         VisiMisi::create([
