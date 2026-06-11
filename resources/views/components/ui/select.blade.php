@@ -3,9 +3,10 @@
     Props:
       - name        (string)          — name attribute
       - label       (string)          — label teks
-      - options     (array)           — ['value' => 'label', ...] atau Collection
+      - options     (array|Collection)— ['value' => 'label', ...]
       - placeholder (string, optional)— teks opsi kosong
       - required    (bool)
+      - selected    (mixed, optional) — nilai yang dipilih (untuk form edit)
 --}}
 
 @props([
@@ -14,6 +15,7 @@
     'options'     => [],
     'placeholder' => 'Pilih...',
     'required'    => false,
+    'selected'    => null,
 ])
 
 <div class="space-y-1.5">
@@ -40,9 +42,11 @@
             <option value="">{{ $placeholder }}</option>
         @endif
 
-        @foreach ($options as $value => $label)
-            <option value="{{ $value }}"
-                    {{ old($name, '') == $value ? 'selected' : '' }}>
+        @foreach ($options as $val => $label)
+            <option
+                value="{{ $val }}"
+                {{ old($name, $selected) == $val ? 'selected' : '' }}
+            >
                 {{ $label }}
             </option>
         @endforeach

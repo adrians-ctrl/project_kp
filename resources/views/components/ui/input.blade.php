@@ -1,11 +1,12 @@
 {{--
     Komponen: Form Input
     Props:
-      - name     (string)          — name attribute
-      - label    (string)          — label teks
-      - type     (string)          — input type, default 'text'
-      - required (bool)            — apakah wajib diisi
-      - hint     (string, optional)— teks bantuan di bawah input
+      - name     (string)           — name attribute
+      - label    (string)           — label teks
+      - type     (string)           — input type, default 'text'
+      - required (bool)             — apakah wajib diisi
+      - hint     (string, optional) — teks bantuan di bawah input
+      - value    (string, optional) — nilai awal (untuk form edit; jika tidak diisi pakai old())
 --}}
 
 @props([
@@ -14,6 +15,7 @@
     'type'     => 'text',
     'required' => false,
     'hint'     => null,
+    'value'    => null,
 ])
 
 <div class="space-y-1.5">
@@ -36,7 +38,7 @@
                         border-[var(--input)] focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20
                         ' . ($errors->has($name) ? 'border-[var(--destructive)] bg-[var(--destructive)]/5' : '')
         ]) }}
-        value="{{ old($name) }}"
+        value="{{ old($name, $value) }}"
     >
 
     @error($name)
