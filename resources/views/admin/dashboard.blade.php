@@ -13,9 +13,9 @@
 @section('content')
 
     <x-ui.page-header
-        title="Dashboard Administrator"
-        desc="Ringkasan statistik akademik dan aktivitas sistem, {{ $today->translatedFormat('l\, d F Y') }}."
-    />
+    title="Dashboard Administrator"
+    :desc="'Ringkasan statistik akademik dan aktivitas sistem, ' . $todayLabel . '.'"
+/>
 
     {{-- Stat Cards --}}
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
