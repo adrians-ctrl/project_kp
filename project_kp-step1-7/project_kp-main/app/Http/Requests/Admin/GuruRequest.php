@@ -28,6 +28,11 @@ class GuruRequest extends FormRequest
                 'max:30',
                 Rule::unique('guru_staf', 'nip')->ignore($guruId),
             ],
+            'user_id' => [
+                'nullable',
+                'exists:users,id',
+                Rule::unique('guru_staf', 'user_id')->ignore($guruId),
+            ],
             'foto' => [
                 'nullable',
                 'image',
@@ -46,6 +51,7 @@ class GuruRequest extends FormRequest
             'pendidikan'   => 'pendidikan terakhir',
             'no_hp'        => 'nomor HP',
             'nip'          => 'NIP',
+            'user_id'      => 'akun pengguna',
             'foto'         => 'foto',
         ];
     }
@@ -53,12 +59,14 @@ class GuruRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'required'     => ':attribute wajib diisi.',
-            'max'          => ':attribute maksimal :max karakter.',
-            'unique'       => ':attribute sudah digunakan.',
-            'image'        => ':attribute harus berupa gambar.',
-            'mimes'        => ':attribute harus berformat jpg, jpeg, png, atau webp.',
-            'foto.max'     => 'Ukuran foto maksimal 2MB.',
+            'required'      => ':attribute wajib diisi.',
+            'max'           => ':attribute maksimal :max karakter.',
+            'unique'        => ':attribute sudah digunakan.',
+            'exists'        => ':attribute tidak ditemukan.',
+            'image'         => ':attribute harus berupa gambar.',
+            'mimes'         => ':attribute harus berformat jpg, jpeg, png, atau webp.',
+            'foto.max'      => 'Ukuran foto maksimal 2MB.',
+            'user_id.unique'=> 'Akun ini sudah terhubung ke data guru lain.',
         ];
     }
 }

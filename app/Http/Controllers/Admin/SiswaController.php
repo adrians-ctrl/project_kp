@@ -7,5 +7,11 @@ use Illuminate\Http\Request;
 
 class SiswaController extends Controller
 {
-    //
+    /**
+     * Menampilkan halaman utama / dashboard Siswa
+     */
+    public function index()
+    {
+        return view('admin.siswa.index');
+    }
 }

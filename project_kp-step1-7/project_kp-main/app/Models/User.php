@@ -28,10 +28,14 @@ class User extends Authenticatable
         ];
     }
 
+    // ── Relasi ────────────────────────────────────────────────────────────
+
     public function guruStaf(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(GuruStaf::class);
     }
+
+    // ── Helper ────────────────────────────────────────────────────────────
 
     public function isAdmin(): bool
     {
@@ -41,5 +45,17 @@ class User extends Authenticatable
     public function isGuru(): bool
     {
         return $this->role === 'guru';
+    }
+
+    public function getInisialAttribute(): string
+    {
+        $words = explode(' ', trim($this->name));
+        $inisial = '';
+
+        foreach (array_slice($words, 0, 2) as $word) {
+            $inisial .= strtoupper(substr($word, 0, 1));
+        }
+
+        return $inisial;
     }
 }

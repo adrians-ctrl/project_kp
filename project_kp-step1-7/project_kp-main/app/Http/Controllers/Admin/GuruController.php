@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\GuruRequest;
 use App\Models\GuruStaf;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -13,7 +14,7 @@ class GuruController extends Controller
 {
     public function index(): View
     {
-        $guru = GuruStaf::with('kelas')
+        $guru = GuruStaf::with(['kelas', 'user'])
             ->orderBy('nama_lengkap')
             ->paginate(15)
             ->withQueryString();
@@ -23,7 +24,13 @@ class GuruController extends Controller
 
     public function create(): View
     {
-        return view('admin.guru.create');
+        // Hanya user role guru yang belum punya data guru
+        $users = User::where('role', 'guru')
+            ->whereDoesntHave('guruStaf')
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
+
+        return view('admin.guru.create', compact('users'));
     }
 
     public function store(GuruRequest $request): RedirectResponse
@@ -44,7 +51,16 @@ class GuruController extends Controller
 
     public function edit(GuruStaf $guru): View
     {
-        return view('admin.guru.edit', compact('guru'));
+        // User yang tersedia: belum punya guru, atau user yang sedang terhubung
+        $users = User::where('role', 'guru')
+            ->where(function ($q) use ($guru) {
+                $q->whereDoesntHave('guruStaf')
+                  ->orWhere('id', $guru->user_id);
+            })
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
+
+        return view('admin.guru.edit', compact('guru', 'users'));
     }
 
     public function update(GuruRequest $request, GuruStaf $guru): RedirectResponse
@@ -58,6 +74,7 @@ class GuruController extends Controller
             $data['foto'] = $request->file('foto')
                 ->store('guru', 'public');
         } else {
+            // Pertahankan foto lama
             unset($data['foto']);
         }
 
