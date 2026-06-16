@@ -46,6 +46,15 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
+Route::get('/debug-user', function () {
+    return response()->json([
+        'login' => auth()->check(),
+        'id' => auth()->user()?->id,
+        'name' => auth()->user()?->name,
+        'email' => auth()->user()?->email,
+        'role' => auth()->user()?->role,
+    ]);
+})->middleware('auth');
 /*
 |--------------------------------------------------------------------------
 | Admin
