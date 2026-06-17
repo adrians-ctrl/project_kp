@@ -36,14 +36,14 @@ class DatabaseSeeder extends Seeder
 
         // ── Profil Sekolah ─────────────────────────────────────────────
         ProfilSekolah::create([
-            'nama_sekolah' => 'SD Negeri Babakan 02',
+            'nama_sekolah' => 'UPTD SD Negeri Babakan 02',
             'npsn'         => '20217685',
             'akreditasi'   => 'A',
-            'alamat'       => 'Jl. Babakan Raya No. 10',
+            'alamat'       => 'Jl. Raya Puspitek Babakan Setu',
             'kelurahan'    => 'Babakan',
-            'kecamatan'    => 'Bogor Tengah',
-            'kota'         => 'Bogor',
-            'provinsi'     => 'Jawa Barat',
+            'kecamatan'    => 'Pamulang',
+            'kota'         => 'Tangerang Selatan',
+            'provinsi'     => 'Banten',
             'kode_pos'     => '16128',
             'telepon'      => '0251-1234567',
             'email'        => 'info@sdbabakan02.sch.id',
