@@ -9,7 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 
 class GaleriController extends Controller
-{{
+{
     public function index(): View
     {{
         return view('coming-soon', ['title' => 'GaleriController']);
@@ -57,4 +57,4 @@ class GaleriController extends Controller
     public function rapor($id): View {{ return view('coming-soon', ['title' => 'Rapor']); }}
     public function getByKelas($kelas): JsonResponse {{ return response()->json([]); }}
     public function resetPassword(Request $request, $user): RedirectResponse {{ return back(); }}
-}}
+}
