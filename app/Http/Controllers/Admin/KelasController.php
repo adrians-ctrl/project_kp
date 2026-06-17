@@ -13,13 +13,9 @@ class KelasController extends Controller
 {
     public function index(): View
     {
-        $kelas = Kelas::with('waliKelas')
-            ->withCount('siswa')
-            ->orderBy('tingkat')
-            ->orderBy('nama_kelas')
-            ->paginate(15)
-            ->withQueryString();
-
+        $kelas    = Kelas::with('waliKelas')->withCount('siswa')
+                        ->orderBy('tingkat')->orderBy('nama_kelas')
+                        ->paginate(15)->withQueryString();
         $guruList = GuruStaf::orderBy('nama_lengkap')->get(['id', 'nama_lengkap', 'jabatan']);
 
         return view('admin.kelas.index', compact('kelas', 'guruList'));
@@ -29,8 +25,7 @@ class KelasController extends Controller
     {
         Kelas::create($request->validated());
 
-        return redirect()
-            ->route('admin.kelas.index')
+        return redirect()->route('admin.kelas.index')
             ->with('success', 'Kelas berhasil ditambahkan.');
     }
 
@@ -45,23 +40,20 @@ class KelasController extends Controller
     {
         $kelas->update($request->validated());
 
-        return redirect()
-            ->route('admin.kelas.index')
+        return redirect()->route('admin.kelas.index')
             ->with('success', 'Data kelas berhasil diperbarui.');
     }
 
     public function destroy(Kelas $kelas): RedirectResponse
     {
         if ($kelas->siswa()->exists()) {
-            return redirect()
-                ->route('admin.kelas.index')
+            return redirect()->route('admin.kelas.index')
                 ->with('error', 'Kelas tidak dapat dihapus karena masih memiliki data siswa.');
         }
 
         $kelas->delete();
 
-        return redirect()
-            ->route('admin.kelas.index')
+        return redirect()->route('admin.kelas.index')
             ->with('success', 'Kelas berhasil dihapus.');
     }
 }

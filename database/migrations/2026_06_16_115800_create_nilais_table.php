@@ -9,13 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('nilais', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
-    }
+   public function up(): void
+{
+    Schema::create('nilais', function (Blueprint $table) {
+        $table->id();
+        $table->integer('semester');
+        $table->string('tahun_ajaran');
+        // tambahkan kolom lain di sini...
+        $table->timestamps();
+    });
+}
 
     /**
      * Reverse the migrations.

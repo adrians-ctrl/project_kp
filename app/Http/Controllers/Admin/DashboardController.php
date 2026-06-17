@@ -15,26 +15,24 @@ use Illuminate\View\View;
 class DashboardController extends Controller
 {
     public function index(): View
-{
-    $today      = Carbon::today();
-    $todayLabel = $today->translatedFormat('l, d F Y');
+    {
+        $today = Carbon::today();
 
-    $stats            = $this->buildStats();
-    $absensiHariIni   = $this->getAbsensiHariIni($today);
-    $ringkasanAbsensi = $this->getRingkasanAbsensi($today);
-    $beritaTerbaru    = $this->getBeritaTerbaru();
-    $siswaPerKelas    = $this->getSiswaPerKelas();
+        $stats = $this->buildStats();
+        $absensiHariIni = $this->getAbsensiHariIni($today);
+        $ringkasanAbsensi = $this->getRingkasanAbsensi($today);
+        $beritaTerbaru = $this->getBeritaTerbaru();
+        $siswaPerKelas = $this->getSiswaPerKelas();
 
-    return view('admin.dashboard', compact(
-        'stats',
-        'absensiHariIni',
-        'ringkasanAbsensi',
-        'beritaTerbaru',
-        'siswaPerKelas',
-        'today',
-        'todayLabel',
-    ));
-}
+        return view('admin.dashboard', compact(
+            'stats',
+            'absensiHariIni',
+            'ringkasanAbsensi',
+            'beritaTerbaru',
+            'siswaPerKelas',
+            'today',
+        ));
+    }
 
     // -------------------------------------------------------------------------
 
