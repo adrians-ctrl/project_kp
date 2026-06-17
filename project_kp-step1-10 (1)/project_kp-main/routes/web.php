@@ -84,6 +84,8 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/absensi', [AdminAbsensi::class, 'index'])->name('absensi.index');
         Route::post('/absensi', [AdminAbsensi::class, 'store'])->name('absensi.store');
         Route::put('/absensi/{absensi}', [AdminAbsensi::class, 'update'])->name('absensi.update');
+        Route::get('/absensi/rekap-harian', [AdminAbsensi::class, 'rekapHarian'])->name('absensi.rekap-harian');
+        Route::get('/absensi/rekap-bulanan', [AdminAbsensi::class, 'rekapBulanan'])->name('absensi.rekap-bulanan');
 
         // Rekap
         Route::get('/rekap/nilai', [AdminRekap::class, 'nilai'])->name('rekap.nilai');
