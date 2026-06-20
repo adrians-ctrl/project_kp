@@ -7,12 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Galeri extends Model
 {
     protected $table = 'galeri';
-    
-    protected $fillable = [
-        'judul',
-        'foto',
-        'deskripsi',
-    ];
+
+    protected $fillable = ['judul', 'foto', 'deskripsi'];
 
     public function getFotoUrlAttribute(): string
     {

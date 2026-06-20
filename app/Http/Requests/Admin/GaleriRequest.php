@@ -6,10 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class GaleriRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
+    public function authorize(): bool { return true; }
 
     public function rules(): array
     {
@@ -37,11 +34,11 @@ class GaleriRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'required'   => ':attribute wajib diisi.',
-            'max'        => ':attribute maksimal :max karakter.',
-            'image'      => ':attribute harus berupa gambar.',
-            'mimes'      => ':attribute harus berformat jpg, jpeg, png, atau webp.',
-            'foto.max'   => 'Ukuran foto maksimal 3MB.',
+            'required' => ':attribute wajib diisi.',
+            'max'      => ':attribute maksimal :max karakter.',
+            'image'    => ':attribute harus berupa gambar.',
+            'mimes'    => ':attribute harus berformat jpg, jpeg, png, atau webp.',
+            'foto.max' => 'Ukuran foto maksimal 3MB.',
         ];
     }
 }

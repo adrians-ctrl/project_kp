@@ -35,7 +35,6 @@
             <x-ui.empty-state
                 title="Belum ada foto di galeri"
                 message="Tambahkan foto kegiatan sekolah untuk ditampilkan di halaman publik."
-                icon='<path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Z"/>'
             >
                 <x-ui.button @click="modalTambah = true" size="sm" type="button">
                     Tambah Foto
@@ -73,11 +72,53 @@
                         </svg>
                     </button>
 
-                    <x-ui.confirm-delete
-                        name="modalHapus"
-                        :action="route('admin.galeri.destroy', $item)"
-                        :label="$item->judul"
-                    />
+                    {{-- Modal Hapus --}}
+                    <div x-show="modalHapus"
+                         x-transition:enter="transition-opacity duration-200"
+                         x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                         x-transition:leave="transition-opacity duration-200"
+                         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                         @keydown.escape.window="modalHapus = false"
+                         class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                         style="display:none">
+                        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                             @click="modalHapus = false"></div>
+                        <div x-show="modalHapus"
+                             x-transition:enter="transition duration-200"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             class="relative w-full max-w-sm rounded-xl border border-[var(--border)]
+                                    bg-[var(--card)] p-6 shadow-[var(--shadow-elevated)]">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 mx-auto mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none"
+                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-center font-display text-base font-semibold text-[var(--foreground)] mb-2">Konfirmasi Hapus</h3>
+                            <p class="text-center text-sm text-[var(--muted-foreground)] mb-6">
+                                Tindakan ini akan menghapus foto <strong class="text-[var(--foreground)]">{{ $item->judul }}</strong> secara permanen.
+                            </p>
+                            <div class="flex gap-3">
+                                <button @click="modalHapus = false" type="button"
+                                        class="flex-1 h-9 rounded-md border border-[var(--border)] bg-[var(--card)]
+                                               text-sm font-medium text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors">
+                                    Batal
+                                </button>
+                                <form method="POST" action="{{ route('admin.galeri.destroy', $item) }}" class="flex-1">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="w-full h-9 rounded-md bg-[var(--destructive)] text-sm font-medium
+                                                   text-white hover:opacity-90 transition-opacity">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             @endforeach
         </div>
@@ -110,7 +151,8 @@
                 <button @click="modalTambah = false" type="button"
                         class="flex h-8 w-8 items-center justify-center rounded-md
                                text-[var(--muted-foreground)] hover:bg-[var(--muted)]">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
                     </svg>
                 </button>
@@ -118,16 +160,18 @@
             <form method="POST" action="{{ route('admin.galeri.store') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="space-y-4 px-5 py-5">
-
-                    {{-- Preview foto --}}
                     <div class="aspect-video w-full overflow-hidden rounded-lg border border-dashed
                                 border-[var(--border)] bg-[var(--muted)] flex items-center justify-center">
                         <img x-show="preview" :src="preview" class="h-full w-full object-cover rounded-lg">
                         <div x-show="!preview" class="text-center p-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 text-[var(--muted-foreground)] mb-2"
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="mx-auto h-8 w-8 text-[var(--muted-foreground)] mb-2"
                                  fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Z"/>
+                                      d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5
+                                         1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5
+                                         0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5
+                                         1.5 0 0 0 1.5 1.5Z"/>
                             </svg>
                             <p class="text-xs text-[var(--muted-foreground)]">Pilih foto untuk diunggah</p>
                         </div>
@@ -167,17 +211,19 @@
          class="fixed inset-0 z-50 flex items-center justify-center p-6"
          style="display:none">
         <div class="absolute inset-0 bg-black/80" @click="lightbox = null"></div>
-        <div class="relative max-w-3xl w-full" @click.outside="lightbox = null">
+        <div class="relative max-w-3xl w-full">
             <img :src="lightbox?.url" :alt="lightbox?.judul"
                  class="w-full max-h-[75vh] object-contain rounded-lg">
             <div class="mt-3 text-center">
                 <p class="text-white font-medium" x-text="lightbox?.judul"></p>
-                <p x-show="lightbox?.deskripsi" class="text-white/70 text-sm mt-1" x-text="lightbox?.deskripsi"></p>
+                <p x-show="lightbox?.deskripsi" class="text-white/70 text-sm mt-1"
+                   x-text="lightbox?.deskripsi"></p>
             </div>
             <button @click="lightbox = null" type="button"
                     class="absolute -top-3 -right-3 flex h-9 w-9 items-center justify-center
                            rounded-full bg-white text-[var(--foreground)] shadow-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
                 </svg>
             </button>

@@ -3,58 +3,38 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
+use App\Http\Requests\Admin\GaleriRequest;
+use App\Models\Galeri;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class GaleriController extends Controller
 {
     public function index(): View
-    {{
-        return view('coming-soon', ['title' => 'GaleriController']);
-    }}
+    {
+        $galeri = Galeri::latest()->paginate(18);
 
-    public function store(Request $request): RedirectResponse
-    {{
-        return back()->with('error', 'Fitur ini sedang dalam pengembangan.');
-    }}
+        return view('admin.galeri.index', compact('galeri'));
+    }
 
-    public function update(Request $request, $id): RedirectResponse
-    {{
-        return back()->with('error', 'Fitur ini sedang dalam pengembangan.');
-    }}
+    public function store(GaleriRequest $request): RedirectResponse
+    {
+        $data         = $request->validated();
+        $data['foto'] = $request->file('foto')->store('galeri', 'public');
 
-    public function destroy($id): RedirectResponse
-    {{
-        return back()->with('error', 'Fitur ini sedang dalam pengembangan.');
-    }}
+        Galeri::create($data);
 
-    public function getSiswaByKelas($kelas): JsonResponse
-    {{
-        return response()->json([]);
-    }}
+        return redirect()->route('admin.galeri.index')
+            ->with('success', 'Foto berhasil ditambahkan ke galeri.');
+    }
 
-    public function getNilai($siswa, $mapel): JsonResponse
-    {{
-        return response()->json([]);
-    }}
+    public function destroy(Galeri $galeri): RedirectResponse
+    {
+        Storage::disk('public')->delete($galeri->foto);
+        $galeri->delete();
 
-    public function getAbsensi($siswa, $tanggal): JsonResponse
-    {{
-        return response()->json([]);
-    }}
-
-    public function exportPdf() {{}}
-    public function exportExcel() {{}}
-    public function exportNilaiPdf() {{}}
-    public function exportNilaiExcel() {{}}
-    public function exportAbsensiPdf() {{}}
-    public function exportAbsensiExcel() {{}}
-
-    public function nilai(): View {{ return view('coming-soon', ['title' => 'Rekap Nilai']); }}
-    public function absensi(): View {{ return view('coming-soon', ['title' => 'Rekap Absensi']); }}
-    public function rapor($id): View {{ return view('coming-soon', ['title' => 'Rapor']); }}
-    public function getByKelas($kelas): JsonResponse {{ return response()->json([]); }}
-    public function resetPassword(Request $request, $user): RedirectResponse {{ return back(); }}
+        return redirect()->route('admin.galeri.index')
+            ->with('success', 'Foto berhasil dihapus dari galeri.');
+    }
 }
