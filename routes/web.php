@@ -137,7 +137,10 @@ Route::middleware(['auth', 'role:guru'])
         // Absensi
         Route::get('/absensi', [GuruAbsensi::class, 'index'])->name('absensi.index');
         Route::post('/absensi', [GuruAbsensi::class, 'store'])->name('absensi.store');
-        Route::put('/absensi/{absensi}', [GuruAbsensi::class, 'update'])->name('absensi.update');
+        Route::get('/absensi/rekap-harian', [GuruAbsensi::class, 'rekapHarian'])->name('absensi.rekap-harian');
+        Route::get('/absensi/rekap-bulanan', [GuruAbsensi::class, 'rekapBulanan'])->name('absensi.rekap-bulanan');
+        Route::get('/absensi/export-pdf', [GuruAbsensi::class, 'exportPdf'])->name('absensi.export.pdf');
+        Route::get('/absensi/export-excel', [GuruAbsensi::class, 'exportExcel'])->name('absensi.export.excel');
 
         // Nilai
         Route::get('/nilai', [GuruNilai::class, 'index'])->name('nilai.index');
