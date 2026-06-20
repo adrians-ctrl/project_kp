@@ -6,10 +6,6 @@
         </svg>
     </div>
     <p class="font-display text-sm font-semibold text-[var(--foreground)]">{{ $title }}</p>
-    @if ($message)
-        <p class="mt-1 text-sm text-[var(--muted-foreground)] max-w-xs">{{ $message }}</p>
-    @endif
-    @if (!empty(trim($slot)))
-        <div class="mt-4">{{ $slot }}</div>
-    @endif
+    @if ($message)<p class="mt-1 text-sm text-[var(--muted-foreground)] max-w-xs">{{ $message }}</p>@endif
+    @isset($slot)@if ($slot->isNotEmpty())<div class="mt-4">{{ $slot }}</div>@endif@endisset
 </div>

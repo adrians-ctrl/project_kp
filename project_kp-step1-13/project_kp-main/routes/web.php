@@ -99,6 +99,7 @@ Route::middleware(['auth', 'role:admin'])
 
         // Berita & Pengumuman
         Route::resource('berita', BeritaController::class)->except(['show']);
+        Route::put('/berita/{beritum}/toggle-publish', [BeritaController::class, 'togglePublish'])->name('berita.toggle-publish');
 
         // Galeri
         Route::resource('galeri', GaleriController::class)->except(['show', 'edit', 'update']);
