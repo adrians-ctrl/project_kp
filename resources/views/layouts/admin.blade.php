@@ -47,7 +47,7 @@
                         </svg>
                     </div>
                     <div class="flex flex-col leading-tight" :class="{'hidden': !sidebarOpen && !isMobile}">
-                        <span class="font-display text-sm font-bold tracking-tight text-[var(--sidebar-foreground)]">SDN Babakan 02</span>
+                        <span class="font-display text-sm font-bold tracking-tight text-[var(--sidebar-foreground)]">UPTD SD Negeri Babakan 02</span>
                         <span class="text-[10px] uppercase tracking-[0.14em] text-[var(--sidebar-foreground)]/60">Sistem Informasi</span>
                     </div>
                 </div>

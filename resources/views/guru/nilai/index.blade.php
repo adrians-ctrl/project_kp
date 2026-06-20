@@ -1,25 +1,46 @@
-@extends('layouts.admin')
+@extends('layouts.guru')
 
-@section('title', 'Nilai Siswa')
+@section('title', 'Input Nilai')
 
 @section('breadcrumb')
-    <span class="text-[var(--muted-foreground)]">Admin</span>
+    <span class="text-[var(--muted-foreground)]">Guru</span>
     <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-[var(--muted-foreground)]/40 mx-0.5"
          fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
     </svg>
-    <span class="font-medium text-[var(--foreground)]">Nilai Siswa</span>
+    <span class="font-medium text-[var(--foreground)]">Input Nilai</span>
 @endsection
 
 @section('content')
 
+@if (! $guru)
+    <x-ui.page-header title="Input Nilai" />
+    <x-ui.section-card>
+        <x-ui.empty-state
+            title="Akun Anda belum terhubung ke data guru"
+            message="Hubungi administrator untuk menautkan akun Anda ke data guru."
+        />
+    </x-ui.section-card>
+@elseif ($kelasList->isEmpty())
+    <x-ui.page-header title="Input Nilai" />
+    <x-ui.section-card>
+        <x-ui.empty-state
+            title="Anda belum ditetapkan sebagai wali kelas"
+            message="Hubungi administrator untuk informasi lebih lanjut."
+        />
+    </x-ui.section-card>
+@else
+
 <div x-data="nilaiApp()" x-init="init()">
 
     <x-ui.page-header
-        title="Nilai Siswa"
-        desc="Input dan kelola nilai akademik siswa per mata pelajaran, semester, dan tahun ajaran."
+        title="Input Nilai Siswa"
+        desc="Kelola nilai akademik siswa untuk kelas yang Anda ampu."
     >
         <x-slot:actions>
+            <x-ui.button variant="secondary" href="{{ route('guru.nilai.rekap') }}">
+                Lihat Rekap
+            </x-ui.button>
             <x-ui.button @click="modalTambah = true" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -32,16 +53,14 @@
 
     {{-- Filter --}}
     <x-ui.section-card>
-        <form method="GET" action="{{ route('admin.nilai.index') }}">
+        <form method="GET" action="{{ route('guru.nilai.index') }}">
             <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-
-                <div class="sm:w-44">
+                <div class="sm:w-48">
                     <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1.5">Kelas</label>
                     <select name="kelas_id"
-                            class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)]
-                                   px-3 text-sm outline-none transition text-[var(--foreground)]
+                            class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)] px-3 text-sm
+                                   outline-none transition text-[var(--foreground)]
                                    focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20">
-                        <option value="">Semua Kelas</option>
                         @foreach ($kelasList as $kelas)
                             <option value="{{ $kelas->id }}" {{ $kelasId == $kelas->id ? 'selected' : '' }}>
                                 {{ $kelas->nama_kelas }}
@@ -49,12 +68,11 @@
                         @endforeach
                     </select>
                 </div>
-
                 <div class="sm:w-52">
                     <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1.5">Mata Pelajaran</label>
                     <select name="mapel_id"
-                            class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)]
-                                   px-3 text-sm outline-none transition text-[var(--foreground)]
+                            class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)] px-3 text-sm
+                                   outline-none transition text-[var(--foreground)]
                                    focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20">
                         <option value="">Semua Mapel</option>
                         @foreach ($mapelList as $mapel)
@@ -64,48 +82,44 @@
                         @endforeach
                     </select>
                 </div>
-
                 <div class="sm:w-32">
                     <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1.5">Semester</label>
                     <select name="semester"
-                            class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)]
-                                   px-3 text-sm outline-none transition text-[var(--foreground)]
+                            class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)] px-3 text-sm
+                                   outline-none transition text-[var(--foreground)]
                                    focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20">
                         <option value="1" {{ $semester == '1' ? 'selected' : '' }}>Semester 1</option>
                         <option value="2" {{ $semester == '2' ? 'selected' : '' }}>Semester 2</option>
                     </select>
                 </div>
-
                 <div class="sm:w-36">
                     <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1.5">Tahun Ajaran</label>
                     <select name="tahun_ajaran"
-                            class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)]
-                                   px-3 text-sm outline-none transition text-[var(--foreground)]
+                            class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)] px-3 text-sm
+                                   outline-none transition text-[var(--foreground)]
                                    focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20">
                         @foreach ($tahunAjaranList as $ta)
                             <option value="{{ $ta }}" {{ $tahunAjaran == $ta ? 'selected' : '' }}>{{ $ta }}</option>
                         @endforeach
                     </select>
                 </div>
-
-                <div class="flex gap-2">
-                    <x-ui.button type="submit">Tampilkan</x-ui.button>
-                    <x-ui.button variant="secondary" href="{{ route('admin.nilai.index') }}">Reset</x-ui.button>
-                </div>
+                <x-ui.button type="submit">Tampilkan</x-ui.button>
             </div>
         </form>
     </x-ui.section-card>
 
     {{-- Tabel nilai --}}
-    <x-ui.section-card :noPadding="true">
+    <x-ui.section-card :noPadding="true"
+        :title="'Nilai — ' . $kelasList->firstWhere('id', $kelasId)?->nama_kelas"
+    >
         <x-slot:actions>
-            <span class="text-xs text-[var(--muted-foreground)]">{{ $nilai->total() }} data nilai</span>
+            <span class="text-xs text-[var(--muted-foreground)]">{{ $nilai->count() }} data</span>
         </x-slot:actions>
 
         @if ($nilai->isEmpty())
             <x-ui.empty-state
                 title="Belum ada data nilai"
-                message="Gunakan tombol Input Nilai atau sesuaikan filter untuk menampilkan data."
+                message="Gunakan tombol Input Nilai untuk menambahkan data."
             >
                 <x-ui.button @click="modalTambah = true" size="sm" type="button">Input Nilai</x-ui.button>
             </x-ui.empty-state>
@@ -115,8 +129,7 @@
                     <thead>
                         <tr class="border-b border-[var(--border)] bg-[var(--muted)]/50">
                             <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">No</th>
-                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Siswa</th>
-                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Kelas</th>
+                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Nama Siswa</th>
                             <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Mata Pelajaran</th>
                             <th class="px-5 py-3 text-center text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Tugas</th>
                             <th class="px-5 py-3 text-center text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">UTS</th>
@@ -129,34 +142,20 @@
                     <tbody class="divide-y divide-[var(--border)]">
                         @foreach ($nilai as $i => $item)
                             <tr class="hover:bg-[var(--muted)]/40 transition-colors"
-                                x-data="{ modalEdit: false, modalHapus: false }">
-                                <td class="px-5 py-3.5 tabular-nums text-[var(--muted-foreground)]">
-                                    {{ $nilai->firstItem() + $i }}
-                                </td>
-                                <td class="px-5 py-3.5">
-                                    <a href="{{ route('admin.siswa.show', $item->siswa) }}"
-                                       class="font-medium text-[var(--foreground)] hover:text-[var(--primary)] transition-colors">
-                                        {{ $item->siswa->nama_lengkap }}
-                                    </a>
-                                    <div class="text-xs text-[var(--muted-foreground)] font-mono">
+                                x-data="{ modalHapus: false }">
+                                <td class="px-5 py-3.5 tabular-nums text-[var(--muted-foreground)]">{{ $i + 1 }}</td>
+                                <td class="px-5 py-3.5 font-medium text-[var(--foreground)]">
+                                    {{ $item->siswa->nama_lengkap }}
+                                    <div class="text-xs text-[var(--muted-foreground)] font-mono font-normal">
                                         {{ $item->siswa->nis }}
                                     </div>
-                                </td>
-                                <td class="px-5 py-3.5 text-[var(--muted-foreground)]">
-                                    {{ $item->siswa->kelas->nama_kelas ?? '—' }}
                                 </td>
                                 <td class="px-5 py-3.5 text-[var(--foreground)]">
                                     {{ $item->mapel->nama_mapel ?? '—' }}
                                 </td>
-                                <td class="px-5 py-3.5 text-center tabular-nums text-[var(--foreground)]">
-                                    {{ $item->nilai_tugas }}
-                                </td>
-                                <td class="px-5 py-3.5 text-center tabular-nums text-[var(--foreground)]">
-                                    {{ $item->nilai_uts }}
-                                </td>
-                                <td class="px-5 py-3.5 text-center tabular-nums text-[var(--foreground)]">
-                                    {{ $item->nilai_uas }}
-                                </td>
+                                <td class="px-5 py-3.5 text-center tabular-nums">{{ $item->nilai_tugas }}</td>
+                                <td class="px-5 py-3.5 text-center tabular-nums">{{ $item->nilai_uts }}</td>
+                                <td class="px-5 py-3.5 text-center tabular-nums">{{ $item->nilai_uas }}</td>
                                 <td class="px-5 py-3.5 text-center">
                                     <span class="font-semibold tabular-nums text-[var(--foreground)]">
                                         {{ number_format($item->nilai_akhir, 1) }}
@@ -165,20 +164,14 @@
                                 <td class="px-5 py-3.5 text-center">
                                     @php
                                         $tone = match($item->grade) {
-                                            'A' => 'success',
-                                            'B' => 'info',
-                                            'C' => 'warning',
-                                            default => 'destructive',
+                                            'A' => 'success', 'B' => 'info',
+                                            'C' => 'warning', default => 'destructive',
                                         };
                                     @endphp
-                                    <x-ui.badge :tone="$tone">
-                                        {{ $item->grade }} — {{ $item->predikat }}
-                                    </x-ui.badge>
+                                    <x-ui.badge :tone="$tone">{{ $item->grade }}</x-ui.badge>
                                 </td>
                                 <td class="px-5 py-3.5">
                                     <div class="flex items-center justify-end gap-1">
-
-                                        {{-- Edit --}}
                                         <button
                                             @click="openEdit({{ json_encode([
                                                 'id'           => $item->id,
@@ -195,16 +188,13 @@
                                             type="button"
                                             class="inline-flex h-8 w-8 items-center justify-center rounded-md
                                                    text-[var(--muted-foreground)] hover:bg-[var(--muted)]
-                                                   hover:text-[var(--foreground)] transition-colors"
-                                            title="Edit">
+                                                   hover:text-[var(--foreground)] transition-colors" title="Edit">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                       d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z"/>
                                             </svg>
                                         </button>
-
-                                        {{-- Hapus --}}
                                         <button @click="modalHapus = true" type="button"
                                                 class="inline-flex h-8 w-8 items-center justify-center rounded-md
                                                        text-[var(--muted-foreground)] hover:bg-red-50
@@ -216,11 +206,10 @@
                                             </svg>
                                         </button>
                                     </div>
-
                                     <x-ui.confirm-delete
                                         name="modalHapus"
-                                        :action="route('admin.nilai.destroy', $item)"
-                                        :label="'nilai ' . ($item->siswa->nama_lengkap ?? '') . ' — ' . ($item->mapel->nama_mapel ?? '')"
+                                        :action="route('guru.nilai.destroy', $item)"
+                                        :label="'nilai ' . $item->siswa->nama_lengkap . ' — ' . ($item->mapel->nama_mapel ?? '')"
                                     />
                                 </td>
                             </tr>
@@ -228,12 +217,6 @@
                     </tbody>
                 </table>
             </div>
-
-            @if ($nilai->hasPages())
-                <div class="border-t border-[var(--border)] px-5 py-4">
-                    {{ $nilai->links('components.ui.pagination') }}
-                </div>
-            @endif
         @endif
     </x-ui.section-card>
 
@@ -270,48 +253,28 @@
                 </button>
             </div>
 
-            <form method="POST" action="{{ route('admin.nilai.store') }}">
+            <form method="POST" action="{{ route('guru.nilai.store') }}">
                 @csrf
                 <div class="space-y-4 px-5 py-5">
 
-                    {{-- Pilih Kelas (untuk filter siswa via AJAX) --}}
-                    <div class="space-y-1.5">
-                        <label class="block text-sm font-medium text-[var(--foreground)]">Kelas</label>
-                        <select @change="loadSiswa($event.target.value)"
-                                class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)]
-                                       px-3 text-sm outline-none transition text-[var(--foreground)]
-                                       focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20">
-                            <option value="">Pilih kelas dulu...</option>
-                            @foreach ($kelasList as $kelas)
-                                <option value="{{ $kelas->id }}"
-                                        {{ $kelasId == $kelas->id ? 'selected' : '' }}>
-                                    {{ $kelas->nama_kelas }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <input type="hidden" name="kelas_id" value="{{ $kelasId }}">
 
-                    {{-- Siswa --}}
                     <div class="space-y-1.5">
                         <label class="block text-sm font-medium text-[var(--foreground)]">
                             Siswa <span class="text-[var(--destructive)]">*</span>
                         </label>
-                        <select name="siswa_id" required x-model="form.siswa_id"
+                        <select name="siswa_id" required
                                 class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)]
                                        px-3 text-sm outline-none transition text-[var(--foreground)]
-                                       focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20"
-                                :disabled="siswaList.length === 0">
-                            <option value="">
-                                <span x-text="siswaList.length === 0 ? 'Pilih kelas terlebih dahulu' : 'Pilih siswa...'"></span>
-                            </option>
-                            <template x-for="s in siswaList" :key="s.id">
-                                <option :value="s.id" x-text="s.nama_lengkap + ' (' + s.nis + ')'"></option>
-                            </template>
+                                       focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20">
+                            <option value="">Pilih siswa...</option>
+                            @foreach ($siswaList as $s)
+                                <option value="{{ $s->id }}">{{ $s->nama_lengkap }} ({{ $s->nis }})</option>
+                            @endforeach
                         </select>
                         @error('siswa_id')<p class="text-xs text-[var(--destructive)]">{{ $message }}</p>@enderror
                     </div>
 
-                    {{-- Mapel --}}
                     <div class="space-y-1.5">
                         <label class="block text-sm font-medium text-[var(--foreground)]">
                             Mata Pelajaran <span class="text-[var(--destructive)]">*</span>
@@ -328,13 +291,10 @@
                         @error('mapel_id')<p class="text-xs text-[var(--destructive)]">{{ $message }}</p>@enderror
                     </div>
 
-                    {{-- Semester & Tahun Ajaran --}}
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-1.5">
-                            <label class="block text-sm font-medium text-[var(--foreground)]">
-                                Semester <span class="text-[var(--destructive)]">*</span>
-                            </label>
-                            <select name="semester" required x-model="form.semester"
+                            <label class="block text-sm font-medium text-[var(--foreground)]">Semester</label>
+                            <select name="semester" x-model="form.semester"
                                     class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)]
                                            px-3 text-sm outline-none transition text-[var(--foreground)]
                                            focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20">
@@ -343,10 +303,8 @@
                             </select>
                         </div>
                         <div class="space-y-1.5">
-                            <label class="block text-sm font-medium text-[var(--foreground)]">
-                                Tahun Ajaran <span class="text-[var(--destructive)]">*</span>
-                            </label>
-                            <select name="tahun_ajaran" required x-model="form.tahun_ajaran"
+                            <label class="block text-sm font-medium text-[var(--foreground)]">Tahun Ajaran</label>
+                            <select name="tahun_ajaran" x-model="form.tahun_ajaran"
                                     class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)]
                                            px-3 text-sm outline-none transition text-[var(--foreground)]
                                            focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20">
@@ -357,48 +315,37 @@
                         </div>
                     </div>
 
-                    {{-- Komponen Nilai --}}
                     <div class="rounded-lg border border-[var(--border)] bg-[var(--muted)]/40 p-4 space-y-4">
                         <p class="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
                             Komponen Nilai (0 – 100)
                         </p>
                         <div class="grid grid-cols-3 gap-3">
                             <div class="space-y-1.5">
-                                <label class="block text-xs font-medium text-[var(--foreground)]">
-                                    Tugas <span class="text-[var(--destructive)]">*</span>
-                                </label>
+                                <label class="block text-xs font-medium text-[var(--foreground)]">Tugas</label>
                                 <input type="number" name="nilai_tugas" min="0" max="100" step="0.01" required
                                        x-model="form.nilai_tugas" @input="hitungNilaiAkhir()"
                                        class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)]
                                               px-3 text-sm text-center tabular-nums outline-none transition
-                                              focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20"
-                                       placeholder="0 – 100">
+                                              focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20">
                             </div>
                             <div class="space-y-1.5">
-                                <label class="block text-xs font-medium text-[var(--foreground)]">
-                                    UTS <span class="text-[var(--destructive)]">*</span>
-                                </label>
+                                <label class="block text-xs font-medium text-[var(--foreground)]">UTS</label>
                                 <input type="number" name="nilai_uts" min="0" max="100" step="0.01" required
                                        x-model="form.nilai_uts" @input="hitungNilaiAkhir()"
                                        class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)]
                                               px-3 text-sm text-center tabular-nums outline-none transition
-                                              focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20"
-                                       placeholder="0 – 100">
+                                              focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20">
                             </div>
                             <div class="space-y-1.5">
-                                <label class="block text-xs font-medium text-[var(--foreground)]">
-                                    UAS <span class="text-[var(--destructive)]">*</span>
-                                </label>
+                                <label class="block text-xs font-medium text-[var(--foreground)]">UAS</label>
                                 <input type="number" name="nilai_uas" min="0" max="100" step="0.01" required
                                        x-model="form.nilai_uas" @input="hitungNilaiAkhir()"
                                        class="w-full h-9 rounded-md border border-[var(--input)] bg-[var(--card)]
                                               px-3 text-sm text-center tabular-nums outline-none transition
-                                              focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20"
-                                       placeholder="0 – 100">
+                                              focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/20">
                             </div>
                         </div>
 
-                        {{-- Preview nilai akhir --}}
                         <div x-show="nilaiAkhir !== null"
                              class="flex items-center justify-between rounded-md bg-[var(--card)]
                                     border border-[var(--border)] px-4 py-2.5">
@@ -462,17 +409,15 @@
                 </button>
             </div>
 
-            <form :action="'/admin/nilai/' + editData.id" method="POST">
+            <form :action="'/guru/nilai/' + editData.id" method="POST">
                 @csrf
                 @method('PUT')
-                {{-- Hidden fields --}}
                 <input type="hidden" name="siswa_id"     :value="editData.siswa_id">
                 <input type="hidden" name="mapel_id"     :value="editData.mapel_id">
                 <input type="hidden" name="semester"     :value="editData.semester">
                 <input type="hidden" name="tahun_ajaran" :value="editData.tahun_ajaran">
 
                 <div class="space-y-4 px-5 py-5">
-
                     <div class="rounded-lg bg-[var(--muted)]/40 px-4 py-3 text-sm">
                         <div class="grid grid-cols-2 gap-2 text-[var(--muted-foreground)]">
                             <span>Semester</span>
@@ -538,18 +483,18 @@
 
 </div>
 
+@endif
+
 @endsection
 
 @push('scripts')
 <script>
-function nilaiApp() {
-    return {
+document.addEventListener('alpine:init', () => {
+    Alpine.data('nilaiApp', () => ({
         modalTambah: {{ $errors->any() ? 'true' : 'false' }},
         modalEditOpen: false,
-        siswaList: @json($siswaList),
 
         form: {
-            siswa_id: '',
             mapel_id: '',
             semester: '{{ $semester }}',
             tahun_ajaran: '{{ $tahunAjaran }}',
@@ -569,22 +514,7 @@ function nilaiApp() {
         editPredikat: '',
         editGradeClass: '',
 
-        init() {
-            @if($kelasId)
-                this.loadSiswa({{ $kelasId }});
-            @endif
-        },
-
-        async loadSiswa(kelasId) {
-            if (!kelasId) { this.siswaList = []; return; }
-            try {
-                const res = await fetch(`/admin/api/siswa-by-kelas/${kelasId}`);
-                this.siswaList = await res.json();
-                this.form.siswa_id = '';
-            } catch (e) {
-                console.error(e);
-            }
-        },
+        init() {},
 
         hitungNilaiAkhir() {
             const t  = parseFloat(this.form.nilai_tugas) || 0;
@@ -644,7 +574,7 @@ function nilaiApp() {
             };
             return map[grade] ?? 'bg-gray-50 text-gray-700 ring-gray-200';
         },
-    }
-}
+    }));
+});
 </script>
 @endpush

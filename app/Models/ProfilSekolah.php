@@ -22,13 +22,14 @@ class ProfilSekolah extends Model
         'email',
         'website',
         'logo',
+        'sambutan',
     ];
 
     public function getLogoUrlAttribute(): string
     {
         return $this->logo
             ? asset('storage/' . $this->logo)
-            : asset('images/default-logo.png');
+            : asset('images/logo.png');
     }
 
     public function getAlamatLengkapAttribute(): string

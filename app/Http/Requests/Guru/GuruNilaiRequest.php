@@ -1,15 +1,29 @@
 <?php
 
-namespace App\Http\Requests\Admin;
+namespace App\Http\Requests\Guru;
 
+use App\Models\Siswa;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class NilaiRequest extends FormRequest
+class GuruNilaiRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $guru = Auth::user()->guruStaf;
+
+        if (! $guru) {
+            return false;
+        }
+
+        // Pastikan siswa yang dinilai berada di salah satu kelas yang diampu guru ini
+        $kelasIds = $guru->kelas()->pluck('id');
+        $siswaId  = $this->input('siswa_id');
+
+        return Siswa::where('id', $siswaId)
+            ->whereIn('kelas_id', $kelasIds)
+            ->exists();
     }
 
     public function rules(): array
@@ -23,9 +37,9 @@ class NilaiRequest extends FormRequest
                 'exists:mata_pelajaran,id',
                 Rule::unique('nilai')->where(function ($query) {
                     return $query
-                        ->where('siswa_id',    $this->input('siswa_id'))
-                        ->where('semester',    $this->input('semester'))
-                        ->where('tahun_ajaran',$this->input('tahun_ajaran'));
+                        ->where('siswa_id', $this->input('siswa_id'))
+                        ->where('semester', $this->input('semester'))
+                        ->where('tahun_ajaran', $this->input('tahun_ajaran'));
                 })->ignore($nilaiId),
             ],
             'semester'     => ['required', 'in:1,2'],
@@ -60,5 +74,10 @@ class NilaiRequest extends FormRequest
             'max'             => ':attribute maksimal :max.',
             'mapel_id.unique' => 'Data nilai siswa ini untuk mata pelajaran, semester, dan tahun ajaran yang sama sudah ada.',
         ];
+    }
+
+    public function failedAuthorization(): void
+    {
+        abort(403, 'Anda tidak memiliki akses untuk menginput nilai siswa ini.');
     }
 }

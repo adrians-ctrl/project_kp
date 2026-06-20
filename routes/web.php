@@ -146,6 +146,8 @@ Route::middleware(['auth', 'role:guru'])
         Route::get('/nilai', [GuruNilai::class, 'index'])->name('nilai.index');
         Route::post('/nilai', [GuruNilai::class, 'store'])->name('nilai.store');
         Route::put('/nilai/{nilai}', [GuruNilai::class, 'update'])->name('nilai.update');
+        Route::delete('/nilai/{nilai}', [GuruNilai::class, 'destroy'])->name('nilai.destroy');
+        Route::get('/nilai/rekap', [GuruNilai::class, 'rekap'])->name('nilai.rekap');
 
         // Rekap
         Route::get('/rekap', [GuruRekap::class, 'index'])->name('rekap.index');

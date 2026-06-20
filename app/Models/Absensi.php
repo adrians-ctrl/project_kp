@@ -22,10 +22,14 @@ class Absensi extends Model
         ];
     }
 
+    // ── Relasi ────────────────────────────────────────────────────────────
+
     public function siswa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Siswa::class);
     }
+
+    // ── Accessor ──────────────────────────────────────────────────────────
 
     public function getStatusLabelAttribute(): string
     {
@@ -49,9 +53,16 @@ class Absensi extends Model
         };
     }
 
+    // ── Scope ─────────────────────────────────────────────────────────────
+
     public function scopeByBulan($query, int $bulan, int $tahun)
     {
         return $query->whereMonth('tanggal', $bulan)
                      ->whereYear('tanggal', $tahun);
+    }
+
+    public function scopeByTanggal($query, string $tanggal)
+    {
+        return $query->whereDate('tanggal', $tanggal);
     }
 }
