@@ -29,7 +29,7 @@ class ProfilSekolah extends Model
     {
         return $this->logo
             ? asset('storage/' . $this->logo)
-            : asset('images/logo.png');
+            : asset('images/default-logo.png');
     }
 
     public function getAlamatLengkapAttribute(): string

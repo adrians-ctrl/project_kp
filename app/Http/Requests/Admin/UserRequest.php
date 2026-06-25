@@ -46,13 +46,13 @@ class UserRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'required'     => ':attribute wajib diisi.',
-            'email'        => ':attribute harus berupa alamat email yang valid.',
-            'max'          => ':attribute maksimal :max karakter.',
-            'unique'       => ':attribute sudah digunakan.',
-            'in'           => ':attribute tidak valid.',
-            'confirmed'    => ':attribute konfirmasi tidak cocok.',
-            'password.min' => 'Password minimal 8 karakter.',
+            'required'         => ':attribute wajib diisi.',
+            'email'            => ':attribute harus berupa alamat email yang valid.',
+            'max'              => ':attribute maksimal :max karakter.',
+            'unique'           => ':attribute sudah digunakan.',
+            'in'               => ':attribute tidak valid.',
+            'confirmed'        => ':attribute konfirmasi tidak cocok.',
+            'password.min'     => 'Password minimal 8 karakter.',
         ];
     }
 }

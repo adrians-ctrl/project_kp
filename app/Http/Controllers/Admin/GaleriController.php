@@ -25,16 +25,19 @@ class GaleriController extends Controller
 
         Galeri::create($data);
 
-        return redirect()->route('admin.galeri.index')
+        return redirect()
+            ->route('admin.galeri.index')
             ->with('success', 'Foto berhasil ditambahkan ke galeri.');
     }
 
     public function destroy(Galeri $galeri): RedirectResponse
     {
         Storage::disk('public')->delete($galeri->foto);
+
         $galeri->delete();
 
-        return redirect()->route('admin.galeri.index')
+        return redirect()
+            ->route('admin.galeri.index')
             ->with('success', 'Foto berhasil dihapus dari galeri.');
     }
 }

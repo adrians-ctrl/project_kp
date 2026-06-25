@@ -10,13 +10,20 @@ class BeritaPengumuman extends Model
     protected $table = 'berita_pengumuman';
 
     protected $fillable = [
-        'judul', 'slug', 'konten', 'gambar',
-        'kategori', 'is_published', 'user_id',
+        'judul',
+        'slug',
+        'konten',
+        'gambar',
+        'kategori',
+        'is_published',
+        'user_id',
     ];
 
     protected function casts(): array
     {
-        return ['is_published' => 'boolean'];
+        return [
+            'is_published' => 'boolean',
+        ];
     }
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -26,7 +33,9 @@ class BeritaPengumuman extends Model
 
     public function getGambarUrlAttribute(): ?string
     {
-        return $this->gambar ? asset('storage/' . $this->gambar) : null;
+        return $this->gambar
+            ? asset('storage/' . $this->gambar)
+            : null;
     }
 
     public function getKontenRingkasAttribute(): string

@@ -40,10 +40,10 @@ class BeritaController extends Controller
 
     public function store(BeritaRequest $request): RedirectResponse
     {
-        $data                 = $request->validated();
-        $data['slug']         = $this->generateUniqueSlug($data['judul']);
-        $data['user_id']      = Auth::id();
-        $data['is_published'] = $request->boolean('is_published');
+        $data = $request->validated();
+        $data['slug']        = $this->generateUniqueSlug($data['judul']);
+        $data['user_id']     = Auth::id();
+        $data['is_published']= $request->boolean('is_published');
 
         if ($request->hasFile('gambar')) {
             $data['gambar'] = $request->file('gambar')->store('berita', 'public');
@@ -51,7 +51,8 @@ class BeritaController extends Controller
 
         BeritaPengumuman::create($data);
 
-        return redirect()->route('admin.berita.index')
+        return redirect()
+            ->route('admin.berita.index')
             ->with('success', 'Berita berhasil ditambahkan.');
     }
 
@@ -62,9 +63,10 @@ class BeritaController extends Controller
 
     public function update(BeritaRequest $request, BeritaPengumuman $beritum): RedirectResponse
     {
-        $data                 = $request->validated();
+        $data = $request->validated();
         $data['is_published'] = $request->boolean('is_published');
 
+        // Regenerasi slug jika judul berubah
         if ($data['judul'] !== $beritum->judul) {
             $data['slug'] = $this->generateUniqueSlug($data['judul'], $beritum->id);
         }
@@ -80,7 +82,8 @@ class BeritaController extends Controller
 
         $beritum->update($data);
 
-        return redirect()->route('admin.berita.index')
+        return redirect()
+            ->route('admin.berita.index')
             ->with('success', 'Berita berhasil diperbarui.');
     }
 
@@ -92,17 +95,21 @@ class BeritaController extends Controller
 
         $beritum->delete();
 
-        return redirect()->route('admin.berita.index')
+        return redirect()
+            ->route('admin.berita.index')
             ->with('success', 'Berita berhasil dihapus.');
     }
 
     public function togglePublish(BeritaPengumuman $beritum): RedirectResponse
     {
-        $beritum->update(['is_published' => !$beritum->is_published]);
+        $beritum->update(['is_published' => ! $beritum->is_published]);
+
         $status = $beritum->is_published ? 'dipublikasikan' : 'disembunyikan';
 
         return back()->with('success', "Berita berhasil {$status}.");
     }
+
+    // ── Private helpers ───────────────────────────────────────────────────
 
     private function generateUniqueSlug(string $judul, ?int $ignoreId = null): string
     {

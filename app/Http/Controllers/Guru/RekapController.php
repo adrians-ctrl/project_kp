@@ -3,58 +3,23 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
 
 class RekapController extends Controller
 {
+    /**
+     * Halaman ringkasan rekap, menautkan ke rekap nilai dan rekap absensi
+     * milik guru yang login. Detail rekap ditangani oleh:
+     * - Guru\NilaiController::rekap()
+     * - Guru\AbsensiController::rekapHarian() / rekapBulanan()
+     */
     public function index(): View
-    {{
-        return view('coming-soon', ['title' => 'RekapController']);
-    }}
+    {
+        $guru = Auth::user()->guruStaf;
 
-    public function store(Request $request): RedirectResponse
-    {{
-        return back()->with('error', 'Fitur ini sedang dalam pengembangan.');
-    }}
+        $kelasList = $guru ? $guru->kelas()->orderBy('nama_kelas')->get(['id', 'nama_kelas']) : collect();
 
-    public function update(Request $request, $id): RedirectResponse
-    {{
-        return back()->with('error', 'Fitur ini sedang dalam pengembangan.');
-    }}
-
-    public function destroy($id): RedirectResponse
-    {{
-        return back()->with('error', 'Fitur ini sedang dalam pengembangan.');
-    }}
-
-    public function getSiswaByKelas($kelas): JsonResponse
-    {{
-        return response()->json([]);
-    }}
-
-    public function getNilai($siswa, $mapel): JsonResponse
-    {{
-        return response()->json([]);
-    }}
-
-    public function getAbsensi($siswa, $tanggal): JsonResponse
-    {{
-        return response()->json([]);
-    }}
-
-    public function exportPdf() {{}}
-    public function exportExcel() {{}}
-    public function exportNilaiPdf() {{}}
-    public function exportNilaiExcel() {{}}
-    public function exportAbsensiPdf() {{}}
-    public function exportAbsensiExcel() {{}}
-
-    public function nilai(): View {{ return view('coming-soon', ['title' => 'Rekap Nilai']); }}
-    public function absensi(): View {{ return view('coming-soon', ['title' => 'Rekap Absensi']); }}
-    public function rapor($id): View {{ return view('coming-soon', ['title' => 'Rapor']); }}
-    public function getByKelas($kelas): JsonResponse {{ return response()->json([]); }}
-    public function resetPassword(Request $request, $user): RedirectResponse {{ return back(); }}
+        return view('guru.rekap.index', compact('guru', 'kelasList'));
+    }
 }

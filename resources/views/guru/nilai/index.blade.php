@@ -489,8 +489,8 @@
 
 @push('scripts')
 <script>
-document.addEventListener('alpine:init', () => {
-    Alpine.data('nilaiApp', () => ({
+function nilaiApp() {
+    return {
         modalTambah: {{ $errors->any() ? 'true' : 'false' }},
         modalEditOpen: false,
 
@@ -574,7 +574,7 @@ document.addEventListener('alpine:init', () => {
             };
             return map[grade] ?? 'bg-gray-50 text-gray-700 ring-gray-200';
         },
-    }));
-});
+    }
+}
 </script>
 @endpush

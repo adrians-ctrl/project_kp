@@ -5,18 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\GuruRequest;
 use App\Models\GuruStaf;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class GuruController extends Controller
 {
-    /**
-     * Daftar semua guru dan staf dengan tampilan grid/tabel.
-     */
     public function index(): View
     {
-        $guru = GuruStaf::with('kelas')
+        $guru = GuruStaf::with(['kelas', 'user'])
             ->orderBy('nama_lengkap')
             ->paginate(15)
             ->withQueryString();
@@ -24,17 +22,17 @@ class GuruController extends Controller
         return view('admin.guru.index', compact('guru'));
     }
 
-    /**
-     * Form tambah guru/staf baru.
-     */
     public function create(): View
     {
-        return view('admin.guru.create');
+        // Hanya user role guru yang belum punya data guru
+        $users = User::where('role', 'guru')
+            ->whereDoesntHave('guruStaf')
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
+
+        return view('admin.guru.create', compact('users'));
     }
 
-    /**
-     * Simpan guru/staf baru ke database.
-     */
     public function store(GuruRequest $request): RedirectResponse
     {
         $data = $request->validated();
@@ -51,31 +49,32 @@ class GuruController extends Controller
             ->with('success', 'Data guru/staf berhasil ditambahkan.');
     }
 
-    /**
-     * Form edit guru/staf.
-     */
     public function edit(GuruStaf $guru): View
     {
-        return view('admin.guru.edit', compact('guru'));
+        // User yang tersedia: belum punya guru, atau user yang sedang terhubung
+        $users = User::where('role', 'guru')
+            ->where(function ($q) use ($guru) {
+                $q->whereDoesntHave('guruStaf')
+                  ->orWhere('id', $guru->user_id);
+            })
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
+
+        return view('admin.guru.edit', compact('guru', 'users'));
     }
 
-    /**
-     * Perbarui data guru/staf.
-     */
     public function update(GuruRequest $request, GuruStaf $guru): RedirectResponse
     {
         $data = $request->validated();
 
         if ($request->hasFile('foto')) {
-            // Hapus foto lama sebelum menyimpan yang baru.
             if ($guru->foto) {
                 Storage::disk('public')->delete($guru->foto);
             }
-
             $data['foto'] = $request->file('foto')
                 ->store('guru', 'public');
         } else {
-            // Tidak ada file baru — pertahankan foto lama.
+            // Pertahankan foto lama
             unset($data['foto']);
         }
 
@@ -86,10 +85,6 @@ class GuruController extends Controller
             ->with('success', 'Data guru/staf berhasil diperbarui.');
     }
 
-    /**
-     * Hapus guru/staf beserta fotonya.
-     * Guru yang masih menjadi wali kelas tidak dapat dihapus.
-     */
     public function destroy(GuruStaf $guru): RedirectResponse
     {
         if ($guru->kelas()->exists()) {

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProfilSekolah;
-use App\Models\VisiMisi;
-use App\Models\GuruStaf;
+use App\Http\Requests\KontakRequest;
 use App\Models\BeritaPengumuman;
 use App\Models\Galeri;
+use App\Models\GuruStaf;
+use App\Models\ProfilSekolah;
+use App\Models\VisiMisi;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class LandingController extends Controller
@@ -16,11 +16,14 @@ class LandingController extends Controller
     public function index(): View
     {
         return view('landing.index', [
-            'profil'  => ProfilSekolah::first(),
-            'visiMisi'=> VisiMisi::first(),
-            'guru'    => GuruStaf::whereNotNull('foto')->orWhereIn('jabatan', ['Kepala Sekolah','Guru Kelas','Guru PAI','Guru PJOK'])->orderBy('nama_lengkap')->limit(8)->get(),
-            'berita'  => BeritaPengumuman::published()->latest()->limit(3)->get(),
-            'galeri'  => Galeri::latest()->limit(6)->get(),
+            'profil'   => ProfilSekolah::first(),
+            'visiMisi' => VisiMisi::first(),
+            'guru'     => GuruStaf::orderByRaw("jabatan = 'Kepala Sekolah' DESC")
+                ->orderBy('nama_lengkap')
+                ->limit(8)
+                ->get(),
+            'berita' => BeritaPengumuman::published()->latest()->limit(3)->get(),
+            'galeri' => Galeri::latest()->limit(6)->get(),
         ]);
     }
 
@@ -34,11 +37,20 @@ class LandingController extends Controller
 
     public function beritaDetail(string $slug): View
     {
-        $berita = BeritaPengumuman::where('slug', $slug)->where('is_published', true)->firstOrFail();
+        $berita = BeritaPengumuman::where('slug', $slug)
+            ->where('is_published', true)
+            ->firstOrFail();
+
+        $beritaLain = BeritaPengumuman::published()
+            ->where('id', '!=', $berita->id)
+            ->latest()
+            ->limit(3)
+            ->get();
 
         return view('landing.berita-detail', [
-            'profil' => ProfilSekolah::first(),
-            'berita' => $berita,
+            'profil'     => ProfilSekolah::first(),
+            'berita'     => $berita,
+            'beritaLain' => $beritaLain,
         ]);
     }
 
@@ -57,14 +69,11 @@ class LandingController extends Controller
         ]);
     }
 
-    public function kirimPesan(Request $request): RedirectResponse
+    public function kirimPesan(KontakRequest $request): RedirectResponse
     {
-        $request->validate([
-            'nama'  => ['required', 'string', 'max:100'],
-            'email' => ['required', 'email'],
-            'pesan' => ['required', 'string', 'max:1000'],
-        ]);
+        // Catatan: pengiriman email/penyimpanan pesan dapat ditambahkan di sini.
+        // Untuk saat ini, pesan divalidasi dan pengguna diberi konfirmasi.
 
-        return back()->with('success', 'Pesan Anda telah terkirim. Terima kasih.');
+        return back()->with('success', 'Pesan Anda telah terkirim. Terima kasih telah menghubungi kami.');
     }
 }

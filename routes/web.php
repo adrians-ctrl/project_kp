@@ -151,8 +151,6 @@ Route::middleware(['auth', 'role:guru'])
 
         // Rekap
         Route::get('/rekap', [GuruRekap::class, 'index'])->name('rekap.index');
-        Route::get('/rekap/export-pdf', [GuruRekap::class, 'exportPdf'])->name('rekap.export.pdf');
-        Route::get('/rekap/export-excel', [GuruRekap::class, 'exportExcel'])->name('rekap.export.excel');
 
         // AJAX
         Route::prefix('api')->name('api.')->group(function () {

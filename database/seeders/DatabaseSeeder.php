@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // ── Users ──────────────────────────────────────────────────────
+        // Users
         $admin = User::create([
             'name'     => 'Administrator',
             'email'    => 'admin@gmail.com',
@@ -34,50 +34,44 @@ class DatabaseSeeder extends Seeder
             'role'     => 'guru',
         ]);
 
-        // ── Profil Sekolah ─────────────────────────────────────────────
+        // Profil Sekolah
         ProfilSekolah::create([
-            'nama_sekolah' => 'UPTD SD Negeri Babakan 02',
+            'nama_sekolah' => 'SD Negeri Babakan 02',
             'npsn'         => '20217685',
             'akreditasi'   => 'A',
-            'alamat'       => 'Jl. Raya Puspitek Babakan Setu',
+            'alamat'       => 'Jl. Babakan Raya No. 10',
             'kelurahan'    => 'Babakan',
-            'kecamatan'    => 'Pamulang',
-            'kota'         => 'Tangerang Selatan',
-            'provinsi'     => 'Banten',
+            'kecamatan'    => 'Bogor Tengah',
+            'kota'         => 'Bogor',
+            'provinsi'     => 'Jawa Barat',
             'kode_pos'     => '16128',
             'telepon'      => '0251-1234567',
             'email'        => 'info@sdbabakan02.sch.id',
             'website'      => 'https://sdbabakan02.sch.id',
         ]);
 
-        // ── Visi Misi ──────────────────────────────────────────────────
+        // Visi Misi
         VisiMisi::create([
             'visi' => 'Terwujudnya peserta didik yang beriman, cerdas, terampil, dan berbudaya lingkungan.',
-            'misi' => implode("\n", [
-                '1. Melaksanakan pembelajaran aktif, kreatif, efektif, dan menyenangkan.',
-                '2. Menumbuhkan penghayatan terhadap ajaran agama dan budaya bangsa.',
-                '3. Mengembangkan potensi siswa secara optimal di bidang akademik dan non-akademik.',
-                '4. Membiasakan perilaku hidup bersih, sehat, dan peduli lingkungan.',
-            ]),
+            'misi' => "1. Melaksanakan pembelajaran aktif, kreatif, efektif, dan menyenangkan.\n2. Menumbuhkan penghayatan terhadap ajaran agama dan budaya bangsa.\n3. Mengembangkan potensi siswa secara optimal.\n4. Membiasakan perilaku hidup bersih, sehat, dan peduli lingkungan.",
         ]);
 
-        // ── Guru & Staf ────────────────────────────────────────────────
-        $gurustaf = [
-            ['nip' => '197505151999031001', 'nama' => 'Drs. Ahmad Fauzi, M.Pd.',    'jabatan' => 'Kepala Sekolah',   'mapel' => null],
-            ['nip' => '198002102006042010', 'nama' => 'Budi Santoso, S.Pd.',        'jabatan' => 'Guru Kelas',       'mapel' => 'Matematika'],
-            ['nip' => '198509202010012015', 'nama' => 'Siti Rahayu, S.Pd.',         'jabatan' => 'Guru Kelas',       'mapel' => 'Bahasa Indonesia'],
-            ['nip' => '199001152015031002', 'nama' => 'Rina Marlina, S.Pd.',        'jabatan' => 'Guru Kelas',       'mapel' => 'IPA'],
-            ['nip' => '199303082018022003', 'nama' => 'Hendra Gunawan, S.Pd.',      'jabatan' => 'Guru Kelas',       'mapel' => 'IPS'],
-            ['nip' => null,                 'nama' => 'Dewi Lestari, S.Pd.I.',      'jabatan' => 'Guru PAI',         'mapel' => 'Pendidikan Agama Islam'],
-            ['nip' => null,                 'nama' => 'Agus Triyono, S.Pd.',        'jabatan' => 'Guru PJOK',        'mapel' => 'PJOK'],
-            ['nip' => null,                 'nama' => 'Fitri Handayani',            'jabatan' => 'Tata Usaha',       'mapel' => null],
+        // Guru & Staf
+        $guruData = [
+            ['nip' => '197505151999031001', 'nama' => 'Drs. Ahmad Fauzi, M.Pd.',  'jabatan' => 'Kepala Sekolah', 'mapel' => null,                   'user_id' => null],
+            ['nip' => '198002102006042010', 'nama' => 'Budi Santoso, S.Pd.',      'jabatan' => 'Guru Kelas',    'mapel' => 'Matematika',             'user_id' => $guruUser->id],
+            ['nip' => '198509202010012015', 'nama' => 'Siti Rahayu, S.Pd.',       'jabatan' => 'Guru Kelas',    'mapel' => 'Bahasa Indonesia',       'user_id' => null],
+            ['nip' => '199001152015031002', 'nama' => 'Rina Marlina, S.Pd.',      'jabatan' => 'Guru Kelas',    'mapel' => 'IPA',                    'user_id' => null],
+            ['nip' => '199303082018022003', 'nama' => 'Hendra Gunawan, S.Pd.',    'jabatan' => 'Guru Kelas',    'mapel' => 'IPS',                    'user_id' => null],
+            ['nip' => null,                 'nama' => 'Dewi Lestari, S.Pd.I.',    'jabatan' => 'Guru PAI',      'mapel' => 'Pendidikan Agama Islam', 'user_id' => null],
+            ['nip' => null,                 'nama' => 'Agus Triyono, S.Pd.',      'jabatan' => 'Guru PJOK',     'mapel' => 'PJOK',                   'user_id' => null],
+            ['nip' => null,                 'nama' => 'Fitri Handayani',           'jabatan' => 'Tata Usaha',    'mapel' => null,                     'user_id' => null],
         ];
 
         $guruModels = [];
-        foreach ($gurustaf as $i => $g) {
-            $userId = $i === 1 ? $guruUser->id : null;
+        foreach ($guruData as $g) {
             $guruModels[] = GuruStaf::create([
-                'user_id'      => $userId,
+                'user_id'      => $g['user_id'],
                 'nip'          => $g['nip'],
                 'nama_lengkap' => $g['nama'],
                 'jabatan'      => $g['jabatan'],
@@ -86,7 +80,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // ── Kelas ──────────────────────────────────────────────────────
+        // Kelas
         $kelasData = [
             ['nama_kelas' => 'Kelas 1A', 'tingkat' => '1', 'wali_id' => $guruModels[1]->id],
             ['nama_kelas' => 'Kelas 2A', 'tingkat' => '2', 'wali_id' => $guruModels[2]->id],
@@ -106,7 +100,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // ── Mata Pelajaran ─────────────────────────────────────────────
+        // Mata Pelajaran
         $mapelData = [
             ['kode_mapel' => 'MTK', 'nama_mapel' => 'Matematika'],
             ['kode_mapel' => 'BIN', 'nama_mapel' => 'Bahasa Indonesia'],
@@ -123,35 +117,32 @@ class DatabaseSeeder extends Seeder
             $mapelModels[] = MataPelajaran::create($m);
         }
 
-        // ── Siswa ──────────────────────────────────────────────────────
-        $namaLaki   = ['Ahmad Rizki', 'Budi Pratama', 'Dimas Arya', 'Eko Saputra', 'Fajar Nugraha', 'Gilang Ramadhan', 'Hendra Wijaya', 'Ivan Kurniawan', 'Joko Susilo', 'Kevin Andika'];
-        $namaPerem  = ['Alya Putri', 'Bunga Cantika', 'Citra Dewi', 'Dina Safitri', 'Eka Rahayu', 'Fina Maharani', 'Gita Lestari', 'Hana Puspita', 'Indah Sari', 'Julia Pratiwi'];
+        // Siswa
+        $namaLaki  = ['Ahmad Rizki','Budi Pratama','Dimas Arya','Eko Saputra','Fajar Nugraha','Gilang Ramadhan','Hendra Wijaya','Ivan Kurniawan','Joko Susilo','Kevin Andika'];
+        $namaPerem = ['Alya Putri','Bunga Cantika','Citra Dewi','Dina Safitri','Eka Rahayu','Fina Maharani','Gita Lestari','Hana Puspita','Indah Sari','Julia Pratiwi'];
 
         $siswaModels = [];
-        $nisCounter  = 2401;
+        $nis = 2401;
 
         foreach ($kelasModels as $ki => $kelas) {
-            $jumlah = 28 + ($ki % 3);
-            for ($j = 0; $j < $jumlah; $j++) {
-                $isLaki      = $j % 2 === 0;
-                $namaArr     = $isLaki ? $namaLaki : $namaPerem;
-                $nama        = $namaArr[$j % 10] . ' ' . ($j < 10 ? '' : 'Putra ');
-                $siswa = Siswa::create([
-                    'nisn'          => (string)(20240000 + $nisCounter),
-                    'nis'           => (string)$nisCounter,
-                    'nama_lengkap'  => trim($nama),
+            for ($j = 0; $j < 25; $j++) {
+                $isLaki = $j % 2 === 0;
+                $nama   = ($isLaki ? $namaLaki : $namaPerem)[$j % 10];
+                $siswaModels[] = Siswa::create([
+                    'nisn'          => (string)(20240000 + $nis),
+                    'nis'           => (string)$nis,
+                    'nama_lengkap'  => $nama,
                     'jenis_kelamin' => $isLaki ? 'L' : 'P',
                     'tempat_lahir'  => 'Bogor',
                     'tanggal_lahir' => now()->subYears(6 + (int)$kelas->tingkat)->subDays(rand(0, 300)),
-                    'alamat'        => 'Jl. Contoh No. ' . ($nisCounter % 100) . ', Bogor',
+                    'alamat'        => 'Jl. Contoh No. ' . ($nis % 99 + 1) . ', Bogor',
                     'kelas_id'      => $kelas->id,
                 ]);
-                $siswaModels[] = $siswa;
-                $nisCounter++;
+                $nis++;
             }
         }
 
-        // ── Nilai ──────────────────────────────────────────────────────
+        // Nilai
         foreach ($siswaModels as $siswa) {
             foreach (array_slice($mapelModels, 0, 5) as $mapel) {
                 Nilai::create([
@@ -166,33 +157,25 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // ── Absensi (7 hari terakhir termasuk hari ini) ────────────────
+        // Absensi 7 hari terakhir
         foreach ($siswaModels as $siswa) {
             for ($d = 0; $d < 7; $d++) {
-                $tanggal = now()->subDays($d)->toDateString();
-                $rand    = rand(1, 10);
-                $status  = match (true) {
-                    $rand <= 7 => 'hadir',
-                    $rand <= 8 => 'izin',
-                    $rand <= 9 => 'sakit',
-                    default    => 'alpha',
-                };
+                $r = rand(1, 10);
                 Absensi::create([
-                    'siswa_id'    => $siswa->id,
-                    'tanggal'     => $tanggal,
-                    'status'      => $status,
-                    'keterangan'  => null,
+                    'siswa_id' => $siswa->id,
+                    'tanggal'  => now()->subDays($d)->toDateString(),
+                    'status'   => match(true) { $r <= 7 => 'hadir', $r <= 8 => 'izin', $r <= 9 => 'sakit', default => 'alpha' },
                 ]);
             }
         }
 
-        // ── Berita & Pengumuman ────────────────────────────────────────
+        // Berita
         $beritaList = [
-            ['judul' => 'Penerimaan Peserta Didik Baru Tahun 2025/2026', 'kategori' => 'pengumuman'],
-            ['judul' => 'Jadwal Ujian Tengah Semester Genap',            'kategori' => 'pengumuman'],
-            ['judul' => 'Siswa SDN Babakan 02 Raih Juara 1 Lomba Cerdas Cermat', 'kategori' => 'berita'],
-            ['judul' => 'Kegiatan Jambore Pramuka Tingkat Kecamatan',    'kategori' => 'berita'],
-            ['judul' => 'Libur Akhir Semester Gasal 2025',               'kategori' => 'pengumuman'],
+            ['judul' => 'Penerimaan Peserta Didik Baru Tahun 2025/2026',                    'kategori' => 'pengumuman'],
+            ['judul' => 'Jadwal Ujian Tengah Semester Genap',                               'kategori' => 'pengumuman'],
+            ['judul' => 'Siswa SDN Babakan 02 Raih Juara 1 Lomba Cerdas Cermat',            'kategori' => 'berita'],
+            ['judul' => 'Kegiatan Jambore Pramuka Tingkat Kecamatan',                       'kategori' => 'berita'],
+            ['judul' => 'Libur Akhir Semester Gasal 2025',                                  'kategori' => 'pengumuman'],
         ];
 
         foreach ($beritaList as $b) {
